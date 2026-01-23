@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accès sécurisé</title>
+
+<style>
+    			a {
+ 		   	color:#000000 ;
+			}
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,.15);
+}
+input, button {
+    width: 100px;
+    padding: 12px;
+    margin-top: 12px;
+    font-size: 16px;
+}
+button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:disabled {
+    background: #999;
+}
+.error {
+    color: red;
+    display: none;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+	<a href="https://discord.gg/jmm5Hd5dkm"><b><FONT size="4pt">- Rejoindre le Discord -</FONT></b></a>
+    <h2>Accès privé</h2>
+    <input type="password" id="pwd" placeholder="Code secret">
+    <button id="btn">Entrer</button>
+    <p class="error" id="err"></p>
+</div>
+
+<script>
+/* SHA-256*/
+const HASH_OK = "e448b55660f576d6c1782d6e6a3d8ac5e6d817fd4143145be8fad5996c4de71e";
+
+const MAX_TRIES = 5;
+const LOCK_TIME = 30_000; // 30 secondes
+
+let tries = Number(localStorage.getItem("tries")) || 0;
+let lockUntil = Number(localStorage.getItem("lockUntil")) || 0;
+
+const btn = document.getElementById("btn");
+const err = document.getElementById("err");
+
+async function sha256(text) {
+    const buffer = await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(text)
+    );
+    return [...new Uint8Array(buffer)]
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+}
+
+function checkLock() {
+    if (Date.now() < lockUntil) {
+        btn.disabled = true;
+        err.style.display = "block";
+        err.textContent = "Accès bloqué temporairement";
+        return true;
+    }
+    btn.disabled = false;
+    return false;
+}
+
+btn.onclick = async () => {
+    if (checkLock()) return;
+
+    const pwd = document.getElementById("pwd").value.trim();
+    const hash = await sha256(pwd);
+
+    if (hash === HASH_OK) {
+        localStorage.clear();
+        window.location.replace("liens-sites.html");
+        sessionStorage.setItem("connected", "true");
+    } else {
+        tries++;
+        localStorage.setItem("tries", tries);
+        err.style.display = "block";
+        err.textContent = "Code incorrect";
+
+        if (tries >= MAX_TRIES) {
+            lockUntil = Date.now() + LOCK_TIME;
+            localStorage.setItem("lockUntil", lockUntil);
+            err.textContent = "Trop de tentatives, accès bloqué";
+        }
+    }
+};
+
+checkLock();
+</script>
+
+</body>
+</html>
