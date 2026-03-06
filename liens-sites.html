@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Rechercher - Wikipédia</title>
+		<link rel="icon" href="https://icon-icons.com/download-file?file=https%3A%2F%2Fimages.icon-icons.com%2F2108%2FPNG%2F512%2Fwikipedia_icon_130786.png&id=130786&pack_or_individual=pack" type="image/x-icon">
+		<style>
+			.tooltip {
+				position: relative;
+			  }
+			  
+			  .tooltip-text {
+				visibility: hidden;
+				opacity: 0;
+				position: absolute;
+				bottom: 120%;
+				left: 50%;
+				transform: translateX(-50%);
+				background-color: #333;
+				color: #fff;
+				padding: 6px 10px;
+				border-radius: 5px;
+				white-space: nowrap;
+				transition: opacity 0.2s ease;
+				z-index: 10;
+				font-size: 30px;
+			  }
+			  
+			  .tooltip:hover .tooltip-text {
+				visibility: visible;
+				opacity: 1;
+			  }
+			body {
+    		background-color: rgb(243, 242, 234);
+    		font-family: Arial, Helvetica, sans-serif;
+    		font-size: 100%;
+    		height: 100%;
+    		margin: 0;
+			}
+			a {
+ 		   	color:#000000 ;
+			}
+			.block-titre {
+    		border: 1px solid #000000 ; 
+    		text-align: center;
+			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.158);
+    		width: 100%;
+			margin-top:5%;
+    		margin-left: auto;
+    		margin-right: auto;
+			z-index:300;
+    		display: block;
+    		background-image:radial-gradient(rgba(248, 248, 248, 0.993), rgb(240, 240, 240));
+			}
+			.block {
+    		border-radius: 20px 20px 20px 20px;
+    		text-align: center;
+    		height: 270px;
+    		width: 270px;
+    		margin-right: auto;
+    		display:flex;
+    		background-color: rgb(241, 241, 241);
+			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.158);
+    		padding: 1%;
+    		margin: 0 1%;
+    		margin-top:1%;
+			display: flex;
+    		flex-direction: column;      
+    		justify-content: space-between;
+			transition: transform 0.25s ease, box-shadow 0.25s ease;
+			}
+			.petitblock {
+    		display: flex;
+    		justify-content: space-around;
+    		width: 100%;
+    		flex-wrap: wrap;
+    		margin-top: 50px;
+    		margin-left: auto;
+    		margin-right: auto;
+			margin-bottom: 40px;
+    		height: auto;
+			z-index:1;
+			}
+			img {
+    		width:220px;
+    		height:120px;
+    		border-radius:12px 12px 12px 12px;
+    		border: 1px solid #000000 ;
+    		margin-top: auto;
+			margin-right: auto;
+			margin-left: auto;
+			}
+			.page {
+	    	overflow: hidden;
+			}
+			.categorie {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.158);
+    		border-radius: 8px 8px 8px 8px;
+    		text-align: center;
+   			height: 7%;
+    		width: 70%;
+    		margin-left: auto;
+    		margin-right: auto;
+    		display: block;
+    		background-color: rgb(214, 210, 210);
+    		padding: 1%;
+    		margin-top: 3%;
+    		margin-bottom: 3%;
+			transition: transform 0.25s ease, box-shadow 0.25s ease;
+			cursor:pointer;
+			transition:.2s;
+			font-size: 40px;
+			z-index:1;
+			}
+			.categorie:hover{transform:scale(1.01)}
+
+			.arrow{margin-right:10px;font-size:.8em}
+
+			.category-content{display:none}
+			.category-content.open{display:block}
+
+			.interligne {
+    		line-height:60%;
+			}
+			#chromeMessage {
+    		display: none;
+    		background-color: #235b63;
+    		color: rgb(245, 226, 226);
+    		padding: 15px;
+    		text-align: center;
+    		font-size: 100%;
+    		margin: 20px;
+    		border-radius: 5px;
+			position:fixed;
+    		top:0;
+			margin-left:150px;
+			}
+			.block:hover {
+			transform: scale(1.025);
+			box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+			}
+			.categorie:hover {
+				transform: scale(1.005);
+				box-shadow: 0 10px 18px rgba(0, 0, 0, 0.158);
+			}
+			.block.clicked {
+				transform: scale(1.5);
+				box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+			}
+			.arrow {
+    		font-size: 0.7em;
+    		margin-left: 10px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div class="block-titre">
+			<p id="chromeMessage"><FONT size="9pt">⚠️ Vous devez utiliser <b>Google Chrome</b> pour que les jeux marchent ⚠️</FONT></p>				
+			<p><FONT size="8pt">Le Wikipédia des jeux disponible au lycée !</FONT></p><br>
+			<p class="grey" class="interligne"><FONT size="2pt">Si un jeu ne marche plus, signaler le sur le Discord</FONT><br></p>
+			<a href="https://discord.gg/jmm5Hd5dkm" class="tooltip"><span class="tooltip-text" style="background-color: #969696;transition: opacity 0.8s ease;"><p style="text-align: center;font-size: 12pt;line-height: 1px;"><u>Via QR code</u> : </p><img src="QR.png" alt="Bug image" style="width: 70px;height: 70px;border: 1px solid #235b63;border-radius: 0px;"></span><b><FONT size="4pt">- Rejoindre le Discord -</FONT></b></a><br><br>
+		</div>
+		<p class="grey" class="interligne" style="text-align: center;"><FONT size="5pt">⚠️ - Certain jeux <b>néssecite de spammer F5</b> pour marcher - ⚠️</FONT><br></p>
+<div class="categorie"><span class="arrow">▼</span> - Jeux Multijoueur</div>
+<div class="category-content">
+		<div class="petitblock">
+			<div class="block">
+                <a href="https://snowriderio.io/steal-a-brainrot"><b><FONT size="6pt">Steal a Brainrot</FONT></b></a><br>
+				<p><FONT size="5pt">Martirise des enfants de 3ans</FONT></p>
+				<img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Steal_a_Brainrot_thumbnail.webp/421px-Steal_a_Brainrot_thumbnail.webp.png" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://poxel.io/"><b><FONT size="6pt">Poxel.io</FONT></b></a><br>
+				<p><FONT size="5pt">FPS complet</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdS8wcnx2bbcFp5_0PbGvRHxGWz79tiutCQw&s" alt="Bug image">
+			</div>
+            <div class="block">
+                <a href="https://yandex.com/games/"><b><FONT size="6pt">Yandex Game</FONT></b></a><br>
+				<p><FONT size="4pt">Plein de jeux comme Poki seulement certain ne marche pas</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdKAbUNR-2QTWDUilrAKdQ1GXDgAPpAT0XyQ&s" alt="Bug image">
+			</div>
+			<div class="block">
+				<a href="https://kour.io/"><b><FONT size="6pt">Kour</FONT></b></a><br>
+				<p><FONT size="5pt">FPS en ligne comme à la counter strike</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmNYkYIaYJRYe7HoSCG8qhzoxV9VHQE896bQ&s" alt="Bug image">
+			</div>
+		</div>
+		<div class="petitblock">
+			<div class="block">
+				<a href="https://veck.io/"><b><FONT size="7pt">Veck</FONT></b></a><br>
+				<p><FONT size="5pt">Jeux roblox</FONT></p>
+				<img src="https://iogames.onl/upload/imgs/veck-io-game.jpg" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://overtide.io/"><b><FONT size="6pt">Overtide</FONT></b></a><br>
+				<p><FONT size="5pt">FPS encore à la counter strike</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTK-BvdY5rSQIuvwY4szQKu6fVDDD_ejF1i8Q&s" alt="Bug image">
+			</div>
+            <div class="block">
+                <a href="https://1v1s.lol/"><b><FONT size="6pt">1v1</FONT></b></a><br>
+				<p><FONT size="5pt">Jeux à la Fortnite en 3D en multi</FONT></p>
+				<img src="https://hotgames.io/data/image/game/1v1lol_800x484_optimized.jpg" alt="Bug image">
+			</div>
+            <div class="block">
+                <a href="https://pokerogue.net/"><b><FONT size="6pt">Pokerogue</FONT></b></a><br>
+				<p><FONT size="5pt">Pokémon sur votre navigateur</FONT></p>
+				<img src="https://pokerogue.io/data/image/posts/pokerogue-banner2.jpg" alt="Bug image">
+			</div>
+		</div>
+		<div class="petitblock">
+            <div class="block">
+                <a href="https://deathbyai.gg/"><b><FONT size="5pt">Death by AI</FONT></b></a><br>
+				<p><FONT size="4pt">Invente un scenario mortel et essaye de faire survivre tes potes face au jugement d'un IA</FONT></p>
+				<img src="https://substackcdn.com/image/fetch/$s_!5mYH!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff32036af-b210-4798-8d4d-967d995a980f_1600x480.jpeg" alt="Bug image">
+			</div>
+            <div class="block">
+                <a href="https://www.pokeclicker.com/"><b><FONT size="6pt">Pokeclicker</FONT></b></a><br>
+				<p><FONT size="5pt">Cookie clicker mais en mode pokémon</FONT></p>
+				<img src="https://i.ytimg.com/vi/l5xQagCqwac/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAUXc4bSFeJoSRc89e4lzFjM7IwMQ" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://letterrush.com/"><b><FONT size="6pt">Letterrush</FONT></b></a><br>
+				<p><FONT size="5pt">Plus tu trouve de mots plus tu gagne (en englais)</FONT></p>
+				<img src="https://s3.amazonaws.com/files.thegamecrafter.com/877a4473076fa6693dc7427bdf7b3c920edaf1e4" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://www.haxball.com/play"><b><FONT size="6pt">Haxball</FONT></b></a><br>
+				<p><FONT size="5pt">Jeux de Foot en 2D à plusieurs</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIcvWnpARmi13m9f6Xqg3SYMNT-qepFvkkVw&s" alt="Bug image">
+			</div>
+		</div>
+		<div class="petitblock">
+            <div class="block">
+                <a href="https://buildroyale.io/"><b><FONT size="6pt">Build Royale</FONT></b></a><br>
+				<p><FONT size="4pt">Version wish de Fornite en 2D (jouable à plusieurs)</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrkzqExS4odz_EZqytZiS3zu27iNxyRI0x_A&s" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://discord.com/"><b><FONT size="6pt">Discord</FONT></b></a><br>
+				<p><FONT size="4px">Une énorme quantité de jeux multijoueur non bloqués ! <a href="https://www.youtube.com/watch?v=G-UHp7qqNVQ">tuto d'aide</a></FONT></p>
+				<img src="https://support.discord.com/hc/article_attachments/1500017894801" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://wefut.com/draft-simulator"><b><FONT size="6pt">Draft simulator</FONT></b></a><br>
+				<p><FONT size="5pt">Des jeux de foot comme FIFA</FONT></p>
+				<img src="https://static.wefut.com/assets/images/classic-draft.jpg?24" alt="Bug image">
+			</div>
+			</div>
+		<div class="petitblock">
+			<div class="block">
+                <a href="https://openfront.io/"><b><FONT size="6pt">OpenFront.io</FONT></b></a><br>
+				<p><FONT size="4pt">Controle la carte et envahi les autres pays</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMzLItw3s1Ps1UghtWdulHdUITQcG40hUh7Q&s" alt="Bug image">
+			</div>
+			<div class="block">
+				<p><FONT size="5pt">Propose nous d'autres jeux !<br><br>Directement sur <a href="https://discord.gg/jmm5Hd5dkm">le Discord</a></FONT></p><br><br>
+			</div>
+		</div>
+		</div>
+<div class="categorie"><span class="arrow">▼</span> - Jeux Solo</div>
+<div class="category-content">
+		<div class="petitblock">
+			<div class="block">
+                <a href="https://slopegame-online.com/"><b><FONT size="7pt">SlopeGame</FONT></b></a><br>
+				<p><FONT size="5pt">Joue à plusieurs jeux (certain sont bloqués mais pas tous)</FONT></p>
+				<img src="https://slopegame-online.com/cache/data/image/options/slope-logo.webp" alt="Bug Image">
+			</div>
+			<div class="block">
+                <a href="https://geometrydashlite.io/geometry-dash-lite"><b><FONT size="6pt">Geometry dash</FONT></b></a><br>
+				<p><FONT size="4pt">Le jeux Géometrie Dash dans sa version payant sur Navigateur</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1Insn2YVBx9dZiW-PYnS6SFQbolzjuNQH-w&s" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://generals.io/"><b><FONT size="6pt">Generals</FONT></b></a><br>
+				<p><FONT size="5pt">Jeux de stratégis complexe en ligne</FONT></p>
+				<img src="https://is1-ssl.mzstatic.com/image/thumb/Purple118/v4/d7/98/bf/d798bf4d-ee0f-1d18-479e-076d8b65174a/mzl.uhhwyvsp.png/1200x630wa.png" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://drivemad3.io/"><b><FONT size="6pt">DriveMad</FONT></b></a><br>
+				<p><FONT size="5pt">Jeux de voiture avec de la physique</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGvjTsiwUGk1S24o-SsNoLQO08CLwWiVVxMg&s" alt="Bug image">
+			</div>
+		</div>
+		<div class="petitblock">
+			<div class="block">
+				<a href="https://arcade.lemonde.fr/"><b><FONT size="6pt">Jeux arcades</FONT></b></a><br>
+				<p><FONT size="5pt">Joue à des jeux simple comme snake</FONT></p>
+				<img src="https://carresenart.halluneed.com/wp-content/uploads/sites/7/2024/12/Julien-Briche-Photographe-64-scaled-2200x0-c-center.jpg" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://ageofwargame.io/"><b><FONT size="6pt">Age of war</FONT></b></a><br>
+				<p><FONT size="4pt">Jeux ancien ou l'on traverse l'histoire en ce battant</FONT></p>
+				<img src="https://play-lh.googleusercontent.com/85VAzGL-C9Bp0RcmBS-JpJaNLgh-_dPdC5-PVpvZoK7dodnqaCQD5oNCNzGuMSXiQA=w526-h296-rw" alt="Bug image">
+			</div>
+            <div class="block">
+                <a href="https://takaiwebsite.neocities.org/minecraft"><b><FONT size="6pt">Minecraft</FONT></b></a><br>
+				<p><FONT size="5pt">Minecraft mais sur navigateur</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD-3GK24djsuBbWGHjqvnALg5_h4oBwgFhKw&s" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://googlefeud.com/"><b><FONT size="6pt">GoogleFeud</FONT></b></a><br>
+				<p><FONT size="5pt">Plein de petit jeux simpa fait par google</FONT></p>
+				<img src="https://media.phillyvoice.com/media/images/Screen_Shot_2015-03-15_at_5.00.10_.2e16d0ba.fill-735x490.png" alt="Bug image">
+			</div>
+		</div>
+		<div class="petitblock">
+			<div class="block">
+                <a href="http://moonlander.seb.ly/"><b><FONT size="6pt">MoonLander</FONT></b></a><br>
+				<p><FONT size="4pt">Fait atterir ton vaisseau le plus délicatement et rapidement possible</FONT></p>
+				<img src="https://i.ytimg.com/vi/UdheQXhZzWU/maxresdefault.jpg" alt="Bug image">
+			</div>
+<!-- --------------------------------------------------------------------------------------------------------------------------->
+			<div class="block">
+                <a href=" https://d07riv.github.io/diabloweb/ "><b><FONT size="6pt">Diablo</FONT></b></a><br>
+				<p><FONT size="5pt">Joue au jeu Diablo émuler</FONT></p>
+				<img src="https://img-cdn.tnwcdn.com/image?fit=1280%2C720&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2019%2F03%2FDiablo-OG.jpg&signature=1b361d3a3d38157a99ecda6bd65f90ee" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://bitburner-official.github.io/"><b><FONT size="6pt">BitBurner</FONT></b></a><br>
+				<p><FONT size="4pt">Devient un hacker super dengereux (skip pas le tuto)</FONT></p>
+				<img src="https://f.hellowork.com/blogdumoderateur/2022/01/bitburner-reputation.jpg" alt="Bug image">
+			</div>
+		</div>
+		<div class="petitblock">
+			<div class="block">
+                <a href="https://i.pinimg.com/originals/03/13/9b/03139b21f03f65b9efd259db21276600.gif"><b><FONT size="6pt">GTA 6</FONT></b></a><br>
+				<p><FONT size="5pt">GTA 6 sur navigateur</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJD6YID04hA6VabspxOi4k_vKYXtQ9V2vQKg&s" alt="Bug image">
+			</div> 
+<!-- --------------------------------------------------------------------------------------------------------------------------->
+			<div class="block">
+                <a href="https://www.google.com/logos/2022/lawson/r1201/lawson.html"><b><FONT size="6pt">Lawson game</FONT></b></a><br>
+				<p><FONT size="5pt">Jeux en hommage a Jerry Lawson ( dévloppeur de jeux )</FONT></p>
+				<img src="https://www.google.com/logos/doodles/2022/jerry-lawsons-82nd-birthday-6753651837109552-2xa.gif" alt="Bug image">
+			</div> 
+			<div class="block">
+                <a href="https://surf.jackbuehner.com/"><b><FONT size="6pt">Surf Edge</FONT></b></a><br>
+				<p><FONT size="5pt">Du surf en 2D</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9Vemp5-RYvne72Uajv0XNfn5NDvrfRmN39w&s" alt="Bug image">
+			</div> 
+		</div>
+		<div class="petitblock">
+			<div class="block">
+                <a href="https://oskarstalberg.com/Townscaper/#HiylCBEzP32I3a-U6sXPl22Ozu2we9E4SOpb7I7a3s3wtN"><b><FONT size="6pt">Town-scaper</FONT></b></a><br>
+				<p><FONT size="4pt">Construit ta ville en créatif sur un océan infini ( c chill )</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbVai5xzLifWF2kh708GBIB6U67MV_5psTmA&s" alt="Bug image">
+			</div> 
+			<div class="block">
+                <a href="https://boredhumans.com/falling_sand.php"><b><FONT size="6pt">Falling-sand</FONT></b></a><br>
+				<p><FONT size="4pt">Fait de la physique super fun ( gunpowder + fire = booom )</FONT></p>
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjPOuHwtra7ZN5kmuJCNjUyx_7KZVz4SXk2w&s" alt="Bug image">
+			</div> 
+			<div class="block">
+                <a href="https://trex-runner.com/"><b><FONT size="6pt">Dino game</FONT></b></a><br>
+				<p><FONT size="4pt">Fait un meilleur score que ton pote sur le jeux de google</FONT></p>
+				<img src="https://play-lh.googleusercontent.com/6OfzHOao-o92uMhcVYN7OFyHE3VhUzcWVrR2hOTAjvPs7BFFs4AJip3srKeB0hVRA0Eg=w526-h296-rw" alt="Bug image">
+			</div>
+			<div class="block">
+                <a href="https://wordle.louan.me/"><b><FONT size="6pt">Wordle</FONT></b></a><br>
+				<p><FONT size="4pt">Trouve le bon mot !</FONT></p>
+				<img src="https://www.internetmatters.org/wp-content/uploads/2022/02/wordle-logo.webp" alt="Bug image">
+			</div>
+		</div>
+		<div class="petitblock">
+			<div class="block">
+                <a href="https://stickmanhook2.io/stickman-hook"><b><FONT size="6pt">Stickmannhook.io</FONT></b></a><br>
+				<p><FONT size="4pt">Joue un stickman qui fait du parcours</FONT></p>
+				<img src="https://stickmanhook2.io/data/image/game/stickman-hook-game.jpg" alt="Bug image">
+			</div> 
+			<div class="block">
+                <a href="https://colonist.io/fr"><b><FONT size="6pt">Colonist.io</FONT></b></a><br>
+				<p><FONT size="4pt">Le jeux colonist mais sur navigateur</FONT></p>
+				<img src="https://s3-eu-west-1.amazonaws.com/tpd/logos/633a3e70780bb1a02229946d/0x0.png" alt="Bug image">
+			</div> 
+		</div>
+		</div>
+<div class="categorie"><span class="arrow">▼</span> - Jeux du site</div>
+<div class="category-content">
+		<div class="petitblock">
+			<div class="block" id="clickGame">
+				<b><font size="6pt">Click Speed</font></b>
+			
+				<p><font size="4pt">
+					Temps : <span id="cg-time">10</span>s<br>
+					Clicks : <span id="cg-score">0</span>
+				</font></p>
+			
+				<button id="cg-btn" style="padding:8px 14px; border-radius:8px; cursor:pointer;">
+					CLIQUE !
+				</button>
+			
+				<button id="cg-restart" style="padding:6px 12px; border-radius:8px; cursor:pointer; display:none;">
+					Rejouer
+				</button>
+			
+				<p id="cg-result" style="font-size:6pt; font-weight:bold;"></p>
+			</div>
+		</div>
+		</div>
+		<div class="categorie"><span class="arrow">▼</span> - Racourcits clavier</div>
+		<div class="category-content">
+			<div class="categorie"><p><b>Pour ne pas se faire choper il faut connaitre ces racourcit clavier pour être beaucoup plus tranquille</b></p></div>
+			<div class="petitblock">
+				<div class="block">
+					<h1><b><FONT size="6pt">Ctrl + w</FONT></b></h1>
+					<p><FONT size="4pt">Ferme instanténément la fenetre <br>( - ATTENTION - certain jeux peuvent vous mettre une pop-up pour confirmer que vous perderez votre sauvegarde - ATTENTION - )</FONT></p>
+				</div>
+				<div class="block">
+					<h1><b><FONT size="6pt">Ctrl + maj + T</FONT></b></h1>
+					<p><FONT size="4pt">Réouvre les derniers sites que vous avez fermé <br>( - ATTENTION - Les jeux qui demandait une confirmation avant de se fermer ne pourront pas être réouvert avec la sauvegarde - ATTENTION - )</FONT></p>
+			</div>
+			<div class="block">
+				<h1><b>Ctrl+<img src="https://img.icons8.com/?size=100&id=rowaeoim856t&format=png&color=000000" style="width: 35px;height: 35px;border-radius: 0px 0px 0px 0px;border: 0px;">+D</b></h1>
+				<p><FONT size="4pt">Vous permez de créer un nouveau bureau et qu'aucune application ne parait encore lancé <br>( contrairement au Racourcits d'avant vous n'avez aucune chance de perdre vos données )</FONT></p>
+		</div>
+		<div class="block">
+			<h1><b>Ctrl+<img src="https://img.icons8.com/?size=100&id=rowaeoim856t&format=png&color=000000" style="width: 35px;height: 35px;border-radius: 0px 0px 0px 0px;border: 0px;">+<br> → ou ←</b></h1>
+			<p><FONT size="4pt">Vous permez de changez de bureau super rapidement et de ne pas être suspect</FONT></p>
+	</div>
+			</div>
+
+		<script>
+			if (!sessionStorage.getItem("connected")) {
+				window.location.href = "index.html";
+			}
+			window.addEventListener("beforeunload", () => {
+				sessionStorage.removeItem("connected");
+			});
+		
+			function detectChrome() {
+				const ua = navigator.userAgent;
+				return ua.includes("Chrome") && !ua.includes("Edg");
+			}
+			
+			if (!detectChrome()) {
+				document.getElementById("chromeMessage").style.display = "block";
+			}
+			document.querySelectorAll(".categorie").forEach(cat => {
+				cat.addEventListener("click", () => {
+				  const content = cat.nextElementSibling;
+				  const arrow = cat.querySelector(".arrow");
+				  document.querySelectorAll(".category-content").forEach(c => {
+					if (c !== content) {
+					  c.classList.remove("open");
+					  c.previousElementSibling.querySelector(".arrow").textContent = "▼";
+					}
+				  });
+			  
+				  const open = content.classList.toggle("open");
+				  arrow.textContent = open ? "▲" : "▼";
+				  
+				  if (open) {
+					setTimeout(() => {
+					  content.scrollIntoView({
+						behavior: "smooth",
+						block: "start"
+					  });
+					}, 200);
+				  }
+				});
+			  });
+
+			
+			(function () {
+				const DURATION = 10;
+			
+				const btn = document.getElementById("cg-btn");
+				const restartBtn = document.getElementById("cg-restart");
+				const scoreEl = document.getElementById("cg-score");
+				const timeEl = document.getElementById("cg-time");
+				const resultEl = document.getElementById("cg-result");
+				const gameBlock = document.getElementById("clickGame");
+				let score = 0;
+				let timeLeft = DURATION;
+				let started = false;
+				let timer = null;
+			
+				function resetGame() {
+					clearInterval(timer);
+					score = 0;
+					timeLeft = DURATION;
+					started = false;
+			
+					scoreEl.textContent = "0";
+					timeEl.textContent = DURATION;
+					resultEl.textContent = "";
+			
+					btn.disabled = false;
+					restartBtn.style.display = "none";
+					gameBlock.classList.remove("clicked");
+				}
+				btn.addEventListener("click", () => {
+					if (!started) {
+						started = true;
+						gameBlock.classList.add("clicked");
+						
+						timer = setInterval(() => {
+							timeLeft--;
+							timeEl.textContent = timeLeft;
+			
+							if (timeLeft <= 0) {
+								clearInterval(timer);
+								btn.disabled = true;
+			
+								const cps = (score / DURATION).toFixed(2);
+								resultEl.textContent = `🔥 CPS : ${cps}`;
+			
+								restartBtn.style.display = "inline-block";
+								gameBlock.classList.remove("clicked");
+							}
+						}, 1000);
+					}
+			
+					if (timeLeft > 0) {
+						score++;
+						scoreEl.textContent = score;
+					}
+				});
+				restartBtn.addEventListener("click", resetGame);
+			})();
+async function testLink(linkElement) {
+    const url = linkElement.href;
+
+    const controller = new AbortController();
+    const timeout = 5000; // change ici (4000ms = 4 secondes)
+
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+    }, timeout);
+
+    try {
+        await fetch(url, {
+            method: "HEAD",
+            mode: "no-cors",
+            signal: controller.signal,
+            cache: "no-store"
+        });
+
+        clearTimeout(timeoutId);
+
+    } catch (error) {
+        clearTimeout(timeoutId);
+        addWarningTooltip(linkElement);
+    }
+}
+
+function addWarningTooltip(linkElement) {
+
+    // Évite doublon
+    if (linkElement.classList.contains("auto-tested")) return;
+    linkElement.classList.add("auto-tested");
+
+    linkElement.classList.add("tooltip");
+
+    const warning = document.createElement("span");
+    warning.className = "tooltip-text";
+    warning.textContent = "⚠️ Il faudra spam F5 sur ce site pour y acceder ⚠️";
+
+    linkElement.appendChild(warning);
+}
+
+/* =============================== */
+/*   LANCEMENT AU CHARGEMENT      */
+/* =============================== */
+
+window.addEventListener("load", () => {
+
+    const allLinks = document.querySelectorAll(".block a");
+
+    allLinks.forEach(link => {
+        testLink(link);
+    });
+
+});
+
+		</script>
+	</body>
+</html>
+
+
