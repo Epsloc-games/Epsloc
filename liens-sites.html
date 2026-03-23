@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Rechercher - Wikipédia</title>
+		<link rel="icon" href="https://icon-icons.com/download-file?file=https%3A%2F%2Fimages.icon-icons.com%2F2108%2FPNG%2F512%2Fwikipedia_icon_130786.png&id=130786&pack_or_individual=pack" type="image/x-icon">
+		<style>
+			a {
+				color:#000000 ;
+			}
+			body {
+				background-color: rgb(243, 242, 234);
+				font-family: Arial, Helvetica, sans-serif;
+				font-size: 100%;
+				height: 100%;
+				margin: 0;
+			}
+			img {
+				width:220px;
+				height:120px;
+				border-radius:12px 12px 12px 12px;
+				border: 1px solid #000000 ;
+				margin-top: auto;
+				margin-right: auto;
+				margin-left: auto;
+			}
+			.time{
+				font-size:11px;
+				color:#9ca3af;
+				margin-left:6px;
+				font-weight:normal;
+			}
+			.tooltip {
+				position: relative;
+			}
+			.tooltip-text {
+				height:40px;
+				visibility: hidden;
+				opacity: 0;
+				position: absolute;
+				bottom: 120%;
+				left: 50%;
+				transform: translateX(-50%);
+				background-color: #5252529a;
+				color: #fff;
+				padding: 6px;
+				border-radius: 5px;
+				white-space: nowrap;
+				transition: opacity 0.2s ease;
+				z-index: 10;
+				font-size: 30px;
+				font-weight:normal;
+				text-decoration-thickness:1px;
+				text-align: center;
+				padding-top: 30px;
+			}
+			
+			.tooltip:hover .tooltip-text {
+				visibility: visible;
+				opacity: 1;
+			}
+			.block-titre {
+				border: 1px solid #000000 ; 
+				text-align: center;
+				box-shadow: 0 8px 16px rgba(0, 0, 0, 0.158);
+				width: 100%;
+				margin-top:5%;
+				margin-left: auto;
+				margin-right: auto;
+				z-index:300;
+				display: block;
+				background-image:radial-gradient(rgba(248, 248, 248, 0.993), rgb(240, 240, 240));
+			}
+			.block {
+				border-radius: 20px;
+				text-align: center;
+				height: 270px;
+				width: 270px;
+				background-color: rgb(241, 241, 241);
+				box-shadow: 0 8px 16px rgba(0, 0, 0, 0.158);
+				padding: 1%;
+				margin: 0 1%;
+				margin-top:1%;
+				display: flex;
+				flex-direction: column;
+				transition: transform 0.25s ease, box-shadow 0.25s ease;
+				position: relative;
+			}
+			.block img:not(.ignore) {
+				position: absolute;
+				bottom: 10px;
+				left: 50%;
+				transform: translateX(-50%);
+				width:220px;
+				height:120px;
+				border-radius:12px;
+				border:1px solid #000000;
+			}
+			.ignore {
+				position:relative;
+				bottom: 0px;
+				left: 0px;
+				width: 35px;
+				height: 35px;
+				border-radius: 0px 0px 0px 0px;
+				border: 0px;
+			}
+			.block:hover {
+				transform: scale(1.025);
+				box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+			}
+			.block.clicked {
+				transform: scale(1.5);
+				box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+			}
+			.petitblock {
+				display: flex;
+				justify-content: space-around;
+				width: 100%;
+				flex-wrap: wrap;
+				margin-top: 50px;
+				margin-left: auto;
+				margin-right: auto;
+				margin-bottom: 40px;
+				height: auto;
+				z-index:1;
+			}
+			.page {
+				overflow: hidden;
+			}
+			.categorie {
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.158);
+				border-radius: 8px 8px 8px 8px;
+				text-align: center;
+				height: 7%;
+				width: 70%;
+				margin-left: auto;
+				margin-right: auto;
+				display: block;
+				background-color: rgb(214, 210, 210);
+				padding: 1%;
+				margin-top: 3%;
+				margin-bottom: 3%;
+				transition: transform 0.25s ease, box-shadow 0.25s ease;
+				cursor:pointer;
+				transition:.2s;
+				font-size: 40px;
+				z-index:1;
+				font-style: oblique 10deg;
+			}
+			.categorie:hover{
+				transform:scale(1.01)
+			}
+			.category-content{
+				display:none
+			}
+			.category-content.open{
+				display:block
+			}
+			.categorie:hover {
+				transform: scale(1.005);
+				box-shadow: 0 10px 18px rgba(0, 0, 0, 0.158);
+			}
+			.arrow{
+				margin-right:10px;
+				font-size:.8em;
+				margin-left: 10px;
+			}
+			.interligne {
+				line-height:60%;
+			}
+			.pseudo {
+				font-weight: bolder;
+				color: #50e2a5;
+			}
+			.title{
+				font-size:23pt;
+				font-weight: bold;
+				text-decoration-thickness:1px;
+				line-height:10%;
+				padding-top: 10px;
+			}
+			.desc{
+				font-size:18pt;
+			}
+			#chromeMessage {
+				display: none;
+				background-color: #244146da;
+				color: rgb(245, 226, 226);
+				padding: 15px;
+				text-align: center;
+				font-size: 100%;
+				margin: 20px;
+				border-radius: 5px;
+				position:fixed;
+				top:0;
+				margin-left:150px;
+				z-index:9999999999999999999;
+			}
+			#openChat{
+				position:fixed;
+				bottom:20px;
+				right:20px;
+				background:#5865F2;
+				color:white;
+				border:none;
+				padding:12px 16px;
+				border-radius:20px;
+				font-size:14px;
+				font-weight:bold;
+				cursor:pointer;
+				z-index:9999;
+				box-shadow:0 4px 12px rgba(0,0,0,0.3);
+				transition:0.2s;
+			}
+			#chatBox{
+				position:fixed;
+				bottom:90px;
+				right:20px;
+				width:350px;
+				height:400px;
+				background:white;
+				border:1px solid #ccc;
+				display:none;
+				flex-direction:column;
+				z-index:9999;
+			}
+			#messages{
+				height:10px;
+				overflow-y:auto;
+				background:#2b2d31;
+				border-radius:6px;
+				padding:8px;
+				color:#dbdee1;
+				font-size:14px;
+				margin-bottom:8px;
+			}
+			#messages::-webkit-scrollbar{
+				width:6px;
+			}
+			#messages::-webkit-scrollbar-thumb{
+				background:#1a1b1e;
+				border-radius:4px;
+			}
+			#chatControls{
+				padding:5px;
+				border-top:1px solid #ddd;
+			}
+			#pseudo{
+				width:80%;
+				padding:8px;
+				border:none;
+				border-radius:6px;
+				background:#1e1f22;
+				color:white;
+				margin-bottom:8px;
+			}
+			#messages div{
+				word-wrap:break-word;
+				overflow-wrap:break-word;
+				white-space:pre-wrap;
+			}
+			#messageInput{
+				width:83%;
+				height:45px;
+				resize:none;
+				border:none;
+				border-radius:6px;
+				background:#1e1f22;
+				color:white;
+				padding:8px;
+				font-family:inherit;
+				box-sizing:border-box;
+			}
+			#send{
+				background:#5865F2;
+				border:none;
+				padding: 8px;
+				padding-right: 12px;
+				padding-left: 12px;
+				border-radius:6px;
+				color:white;
+				font-weight:bold;
+				cursor:pointer;
+				transition:0.2s;
+				font-size: 17pt;
+				text-align: center;
+				margin-left: 14px;
+				position:fixed;
+			}
+			#send:hover{
+				background:#4752C4;
+			}
+			#openChat:hover{
+				background:#4752C4;
+			}
+			#chat{
+				position:fixed;
+				bottom:70px;
+				right:20px;
+				width:320px;
+				height:580px;
+				background:#313338;
+				border-radius:10px;
+				display:none;
+				flex-direction:column;
+				padding:10px;
+				box-shadow:0 8px 25px rgba(0,0,0,0.4);
+				z-index:9999;
+			}
+		</style>
+	</head>
+	<body>
+		<!--Message Systeme-->
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+		<button id="openChat">Viens discuter</button>
+		<div id="chat" style="display:none;border:1px solid black;padding:10px;width:350px">
+			<input id="pseudo" maxlength="20" placeholder="pseudo"><br>
+			<a style="background:#58f2a59c;color:rgb(44, 44, 44);text-decoration: none;border:none;padding: 6px;border-radius:20px;font-size:13px;margin-left: 50%;margin-bottom: 20px;" href="https://padlet.com/epsloc/epsloc-transfer-6ak11yiy2ul94y69">Pour transferer des fichiers</a><br>
+			<div id="messages" maxlength="400" style="height:450px;overflow-y:auto;border:1px solid gray;margin-bottom:5px;padding:5px;font-size:13px"></div>
+			<textarea id="messageInput" placeholder="message"></textarea><button id="send">➤</button><br>
+		</div>
+		<!--Bandeau titre-->
+		<div class="block-titre">
+			<p id="chromeMessage"><FONT size="9pt">⚠️ Vous devez utiliser <b>Google Chrome</b> pour que les jeux marchent ⚠️</FONT></p>				
+			<p><FONT size="8pt">Le Wikipédia des jeux disponible au lycée !</FONT></p><br>
+			<p class="grey" class="interligne"><FONT size="2pt">Si un jeu ne marche plus, signalez-le sur le Discord</FONT><br></p>
+			<a href="https://discord.gg/jmm5Hd5dkm" class="tooltip"><span class="tooltip-text" style="background-color: #969696;transition: opacity 0.8s ease;"><p style="text-align: center;font-size: 12pt;line-height: 1px;"><u>Via QR code</u> : </p><img src="QR.png" alt="Bug image" style="width: 70px;height: 70px;border: 1px solid #235b63;border-radius: 0px;"></span><b><FONT size="4pt">- Rejoindre le Discord -</a><br><br></b>
+		</div>
+			<p class="grey"class="interligne"class="title"style="text-align: center;">⚠️ - Certains jeux <b>nécessitent de spammer F5</b> pour fonctionner - ⚠️<br></p>
+<!----------------------------------------------------------------------------------------------------------------------------------------------->
+	<div class="categorie"><span class="arrow">▼</span> - Jeux Multijoueur</div>
+	<div class="category-content">
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://snowriderio.io/steal-a-brainrot"class="title">Steal a Brainrot</a><br>
+					<p class="desc">Martyrise des enfants de 3 ans</p>
+					<img src="https://static-content.rtbf.be/article/image/1920x1080/a/9/6/5cbdfd0dfa22a3fca7266376887f549b-1758199670.jpg" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://poxel.io/"class="title">Poxel.io</a><br>
+					<p class="desc">FPS complet en multijoueur</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdS8wcnx2bbcFp5_0PbGvRHxGWz79tiutCQw&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                		<a href="https://mkpc.malahieude.net/mariokart.php"class="title">MarioKart</a><br>
+					<p class="desc">Mario Kart en ligne</p>
+					<img src="https://media.ouest-france.fr/v1/pictures/MjAyMjA5ZjhmZDM0MDkxNjU2Mzg2MDAxMmU1Y2UzMmI2NjgxNGM?width=1260&height=708&focuspoint=49%2C58&cropresize=1&client_id=bpeditorial&sign=2be875f01874bb8a51d0f95bc4ad19c99a465dbb3ace868b684e4b3c8c36b249" alt="Bug image">
+				</div>
+	            <!--<div class="block">
+	                <a href="https://yandex.com/games/" class="title">Yandex Game</a><br>
+Trouve des jeux avec ce site :<p class="desc">Plein de jeux comme Poki seulement certain ne marche pas</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdKAbUNR-2QTWDUilrAKdQ1GXDgAPpAT0XyQ&s" alt="Bug image">
+				</div>-->
+				<div class="block">
+					<a href="https://kour.io/" class="title">Kour</a><br>
+					<p class="desc">FPS en ligne comme à la counter strike</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6XQXQI_pPM4-Q__M1h5uMHntDhQh_ch5v4A&s" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+				<div class="block">
+					<a href="https://veck.io/" class="title">Veck</a><br>
+					<p class="desc">Jeu Roblox</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDqLzDCnthhlDeetdcIQBzOqW74c1ndz7kSw&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://overtide.io/"class="title">Overtide</a><br>
+					<p class="desc">FPS encore à la counter strike</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdSFPFNM3_-Fq7Fl4FJIISRC3LXn__2BMocQ&s" alt="Bug image">
+				</div>
+	            <div class="block">
+	                <a href="https://1v1s.lol/"class="title">1v1</a><br>
+					<p class="desc">Jeux à la Fortnite en 3D en multi</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5e6EOAkvWDDrhDWLROtmsFOJwMjhAYYVF4g&s" alt="Bug image">
+				</div>
+	            <div class="block">
+	                <a href="https://pokerogue.net/"class="title">Pokerogue</a><br>
+					<p class="desc">Pokémon sur votre navigateur</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpuLEwYSxZiwMqcKSrl8U1dCVTdiWW0kqxKQ&s" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+	            <div class="block">
+	                <a href="https://deathbyai.gg/"class="title">Death by AI</a><br>
+					<p class="desc" style="font-size: 16pt">Invente un scenario et trouve un moyen d'y survivre face au jugement d'une IA</p>
+					<img src="https://substackcdn.com/image/fetch/$s_!5mYH!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff32036af-b210-4798-8d4d-967d995a980f_1600x480.jpeg" alt="Bug image">
+				</div>
+	            <div class="block">
+	                <a href="https://www.pokeclicker.com/"class="title">Pokeclicker</a><br>
+					<p class="desc">Cookie clicker mais en mode pokémon</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl6A3Se4H6Ca9x-2UvlRZFE0wlohtD5qVylQ&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://letterrush.com/"class="title">Letterrush</a><br>
+					<p class="desc">Plus tu trouves de mots, plus tu gagnes (en anglais)</p>
+					<img src="https://s3.amazonaws.com/files.thegamecrafter.com/877a4473076fa6693dc7427bdf7b3c920edaf1e4" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://www.haxball.com/play"class="title">Haxball</a><br>
+					<p class="desc">Jeux de Foot en 2D à plusieurs</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIcvWnpARmi13m9f6Xqg3SYMNT-qepFvkkVw&s" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+	            <div class="block">
+	                <a href="https://buildroyale.io/"class="title">Build Royale</a><br>
+					<p class="desc">Version Wish de Fortnite en 2D</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrkzqExS4odz_EZqytZiS3zu27iNxyRI0x_A&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://discord.com/"class="title">Discord</a><br>
+					<p class="desc">Une énorme quantité de jeux multijoueur non bloqués ! <a href="https://www.youtube.com/watch?v=G-UHp7qqNVQ">tuto d'aide</a></p>
+					<img src="https://support.discord.com/hc/article_attachments/1500017894801" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://wefut.com/draft-simulator"class="title">Draft simulator</a><br>
+					<p class="desc">Des jeux de foot comme FIFA</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB8CZh_u9SCg8rBjRSJtQD1rNtOuBxwT40dQ&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://yandex.com/games/app/shootoff-counterattack-485320"class="title">Counter Attack</a><br>
+					<p class="desc">Copie de counterstrike</p>
+					<img src="https://i.ytimg.com/vi/-UBgHK6O57A/maxresdefault.jpg" alt="Bug image">
+				</div>
+				</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://openfront.app/"class="title">OpenFront.io</a><br>
+					<p class="desc">Contrôle la carte et envahis les autres pays</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMzLItw3s1Ps1UghtWdulHdUITQcG40hUh7Q&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://yandex.com/games/app/310672"class="title">Among us</a><br>
+					<p class="desc">Among us sur navigateur</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQqLA6-eAXA-sxkAnbafTd7NB4DKaIsqiMrg&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://allwebgames.com/fr/g/367309"class="title">Valorant</a><br>
+					<p class="desc">Copie de Valorant presque parfaite</p>
+					<img src="https://www.riotgames.com/darkroom/1440/8d5c497da1c2eeec8cffa99b01abc64b:5329ca773963a5b739e98e715957ab39/ps-f2p-val-console-launch-16x9.jpg" alt="Bug image">
+				</div>
+				<div class="block">
+					<p class="desc">Propose nous d'autres jeux !<br><br>Directement sur <a href="https://discord.gg/jmm5Hd5dkm">le Discord</a></p><br><br>
+				</div>
+			</div>
+			</div>
+<!----------------------------------------------------------------------------------------------------------------------------------------------->
+	<div class="categorie"><span class="arrow">▼</span> - Jeux Solo</div>
+	<div class="category-content">
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://slopegame-online.com/"class="title">SlopeGame</a><br>
+					<p class="desc">Joue à plusieurs jeux (certain sont bloqués mais pas tous)</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWoQPoacDK91lvo-7YjpvO9VkVxMuBqkEvKQ&s" alt="Bug Image">
+				</div>
+				<div class="block">
+	                <a href="https://geometrydashlite.io/geometry-dash-lite"class="title">Geometry dash</a><br>
+					<p class="desc">Le jeu Geometry Dash dans sa version payante</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1Insn2YVBx9dZiW-PYnS6SFQbolzjuNQH-w&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://generals.io/"class="title">Generals</a><br>
+					<p class="desc">Jeu de stratégie complexe en ligne</p>
+					<img src="https://is1-ssl.mzstatic.com/image/thumb/Purple118/v4/d7/98/bf/d798bf4d-ee0f-1d18-479e-076d8b65174a/mzl.uhhwyvsp.png/1200x630wa.png" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://drivemad3.io/"class="title">DriveMad</a><br>
+					<p class="desc">Jeux de voiture avec de la physique</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGvjTsiwUGk1S24o-SsNoLQO08CLwWiVVxMg&s" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+				<div class="block">
+					<a href="https://arcade.lemonde.fr/"class="title">Jeux arcades</a><br>
+					<p class="desc">Joue à des jeux simple comme snake</p>
+					<img src="https://carresenart.halluneed.com/wp-content/uploads/sites/7/2024/12/Julien-Briche-Photographe-64-scaled-2200x0-c-center.jpg" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://ageofwargame.io/"class="title">Age of war</a><br>
+					<p class="desc">Jeu ancien où l'on traverse l'histoire en se battant</p>
+					<img src="https://play-lh.googleusercontent.com/85VAzGL-C9Bp0RcmBS-JpJaNLgh-_dPdC5-PVpvZoK7dodnqaCQD5oNCNzGuMSXiQA=w526-h296-rw" alt="Bug image">
+				</div>
+	            <div class="block">
+	                <a href="https://takaiwebsite.neocities.org/minecraft"class="title">Minecraft</a><br>
+					<p class="desc">Minecraft mais sur navigateur</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD-3GK24djsuBbWGHjqvnALg5_h4oBwgFhKw&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://googlefeud.com/"class="title">GoogleFeud</a><br>
+					<p class="desc">Plein de petits jeux sympas faits par Google</p>
+					<img src="https://media.phillyvoice.com/media/images/Screen_Shot_2015-03-15_at_5.00.10_.2e16d0ba.fill-735x490.png" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="http://moonlander.seb.ly/"class="title">MoonLander</a><br>
+					<p class="desc">Fais atterrir ton vaisseau le plus délicatement</p>
+					<img src="https://i.ytimg.com/vi/UdheQXhZzWU/maxresdefault.jpg" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://subwaysurfersenligne.fr/"class="title">Subway surfer</a><br>
+					<p class="desc">Subway Surfers mais en ligne</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCRyg9eXt2cKvWAgN20tfMcjgzxvCPNPMYEQ&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href=" https://d07riv.github.io/diabloweb/ "class="title">Diablo</a><br>
+					<p class="desc">Joue au jeu Diablo émuler</p>
+					<img src="https://img-cdn.tnwcdn.com/image?fit=1280%2C720&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2019%2F03%2FDiablo-OG.jpg&signature=1b361d3a3d38157a99ecda6bd65f90ee" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://bitburner-official.github.io/"class="title">BitBurner</a><br>
+					<p class="desc">Deviens un hacker super dangereux (skip pas le tuto)</p>
+					<img src="https://f.hellowork.com/blogdumoderateur/2022/01/bitburner-reputation.jpg" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://i.pinimg.com/originals/03/13/9b/03139b21f03f65b9efd259db21276600.gif"class="title">GTA 6</a><br>
+					<p class="desc">GTA 6 sur navigateur</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJD6YID04hA6VabspxOi4k_vKYXtQ9V2vQKg&s" alt="Bug image">
+				</div> 
+				<div class="block">
+	                <a href="https://geometrydashlite.io/bloons-tower-defense"class="title">Bloons tower</a><br>
+					<p class="desc">Place des singes et détruis des ballons</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeMIyPxpRZ6cMvxixiUy9ZPDBQ9WUxvFEqLw&s" alt="Bug image">
+				</div> 
+				<div class="block">
+	                <a href="https://www.google.com/logos/2022/lawson/r1201/lawson.html"class="title">Lawson game</a><br>
+					<p class="desc">Jeu en hommage à Jerry Lawson (développeur de jeux)</p>
+					<img src="https://www.google.com/logos/doodles/2022/jerry-lawsons-82nd-birthday-6753651837109552-2xa.gif" alt="Bug image">
+				</div> 
+				<div class="block">
+	                <a href="https://surf.jackbuehner.com/"class="title">Surf Edge</a><br>
+					<p class="desc">Du surf en 2D</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9Vemp5-RYvne72Uajv0XNfn5NDvrfRmN39w&s" alt="Bug image">
+				</div> 
+			</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://oskarstalberg.com/Townscaper/#HiylCBEzP32I3a-U6sXPl22Ozu2we9E4SOpb7I7a3s3wtN"class="title">Town-scaper</a><br>
+					<p class="desc">Construis ta ville en créatif sur un océan infini (c'est chill)</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbVai5xzLifWF2kh708GBIB6U67MV_5psTmA&s" alt="Bug image">
+				</div> 
+				<div class="block">
+	                <a href="https://boredhumans.com/falling_sand.php"class="title">Falling-sand</a><br>
+					<p class="desc">Fais de la physique super fun ( gunpowder + fire = booom )</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjPOuHwtra7ZN5kmuJCNjUyx_7KZVz4SXk2w&s" alt="Bug image">
+				</div> 
+				<div class="block">
+	                <a href="https://www.offlinedino.com/"class="title">Dino game</a><br>
+					<p class="desc">Fais un meilleur score que ton pote sur le jeu de Google</p>
+					<img src="https://play-lh.googleusercontent.com/6OfzHOao-o92uMhcVYN7OFyHE3VhUzcWVrR2hOTAjvPs7BFFs4AJip3srKeB0hVRA0Eg=w526-h296-rw" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://wordle.louan.me/"class="title">Wordle</a><br>
+					<p class="desc">Trouve le bon mot !</p>
+					<img src="https://www.internetmatters.org/wp-content/uploads/2022/02/wordle-logo.webp" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://stickmanhook2.io/stickman-hook"class="title">Stickmannhook.io</a><br>
+					<p class="desc">Joue un stickman qui fait du parcours</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7yGTbvcQlPo-wkdb9nlRNJFUr4OZi2ohMZQ&s" alt="Bug image">
+				</div> 
+				<div class="block">
+	                <a href="https://colonist.io/fr"class="title">Colonist.io</a><br>
+					<p class="desc">Le jeu Colonist mais sur navigateur</p>
+					<img src="https://s3-eu-west-1.amazonaws.com/tpd/logos/633a3e70780bb1a02229946d/0x0.png" alt="Bug image">
+				</div> 
+				<div class="block">
+	                <a href="https://geometrydashlite.io/block-blast"class="title">Block blast</a><br>
+					<p class="desc">Block blast sur pc</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjlqBjmvzBzt_iKzfT8FbuFPTq7b2T8g_ybQ&s" alt="Bug image">
+				</div> 
+				<div class="block">
+	                <a href="https://geometrydashlite.io/impossible-bus-stunt"class="title">Bus stunt</a><br>
+					<p class="desc">Simule un bus sur des routes suspendue</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFWcH6TWrc21enIf9T5ILpBusBN0_HkE0eRw&s" alt="Bug image">
+				</div> 
+			</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://scratch.mit.edu/projects/389464290/"class="title">Getting Over It</a><br>
+					<p class="desc">Tu ne peux que te déplacer avec ton marteau</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX3YP0SgGf_Ja8ug8DZY3ZAY8gnl7LY0fnYw&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://boredhumans.com/chess.php"class="title">Echec IA</a><br>
+					<p class="desc">Mets échec et mat une IA</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQX2bwpi2mIRVh096cpBtgvZ3qdzXTfG4Bqmg&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://boredhumans.com/virtual_girlfriends.php"class="title">Virtual girlfriends</a><br>
+					<p class="desc">Séduis une IA</p>
+					<img src="https://www.laquadrature.net/files/censure.gif" alt="Bug image">
+				</div>         
+				<div class="block">
+	                <a href="https://yandex.com/games/app/165291?utm_source=game_promo_catalog&yclid=16976836126871126015"class="title">Mr bullet</a><br>
+					<p class="desc">Tue l'ennemie avec des balles précise</p>
+					<img src="https://i.ytimg.com/vi/SccV4TmmJfc/hqdefault.jpg" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://yandex.com/games/app/183657?utm_source=game_promo_catalog&yclid=18199806642123964415"class="title">Five Nights At<br><br><br><br><br><br><br><br><br> Freddy's</a><br>
+					<p class="desc">Le jeu d'horreur Five Nights At Freddy's sur navigateur </p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhs5bjqaeG5DIQjPNAtgec2U2U4J-uppPFZw&s" alt="Bug image">
+				</div>  
+				<div class="block">
+	                <a href="https://yandex.com/games/app/brawl-simulator-3d-462102"class="title">Brawl star</a><br>
+					<p class="desc">Brawl star sur navigateur mais tu es contre des bots</p>
+					<img src="https://upload.wikimedia.org/wikipedia/en/b/b2/Brawl_Stars_logo_2025.svg" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://yandex.com/games/app/388246"class="title">Plants VS Zombie</a><br>
+					<p class="desc">J'ai vraiment besoin d'expliquer ?</p>
+					<img src="https://upload.wikimedia.org/wikipedia/fr/0/0f/Plants_vs_Zombies_Logo.png" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://yandex.com/games/app/335889"class="title">Gladiator fight</a><br>
+					<p class="desc">Bat toi comme un gladiateur</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRGMaEf8HvyBefutgiXSSc9RIPIrcpy50SKQ&s" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://yandex.com/games/app/421407"class="title">Piano world</a><br>
+					<p class="desc">Appuie au bon moment sur les touches du piano</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtav2XuklSZ5n1QFaaDvhfhvRESW0cGy_gdA&s" alt="Bug image">
+				</div>  
+				<div class="block">
+	                <a href="https://yandex.com/games/app/187987"class="title">Buckshot roulette</a><br>
+					<p class="desc">Joue a la roulette russe avec quelque petit twist</p>
+					<img src="https://upload.wikimedia.org/wikipedia/en/7/72/Buckshot_Roulette_Cover.jpg" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://yandex.com/games/app/276521"class="title">Tabs</a><br>
+					<p class="desc">Fait affronter des armées de débiles entre eux</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxHZECAyPWyYKf61J-mEJ_fyQtE1WVEOo4EA&s" alt="Bug image">
+				</div>
+				<div class="block">
+	                <a href="https://yandex.com/games/app/448280"class="title">Top bins</a><br>
+					<p class="desc">Fait du tire au but</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROFDVauRoDhaWo5MlaAv7z8k7esJaZp1HVWw&s" alt="Bug image">
+				</div>
+			</div>
+			<div class="petitblock">
+				<div class="block">
+	                <a href="https://nointernetgame.com/game/ultrakill"class="title">Ultra Kill</a><br>
+					<p class="desc">Jeu hyper dynamique et incroyable</p>
+					<img src="https://m.media-amazon.com/images/I/91iQcC7apEL.png" alt="Bug image">
+				</div>  
+				<div class="block">
+	                <a href="https://hollowknight.io/"class="title">Hollowknight</a><br>
+					<p class="desc">Hollowknight en ligne</p>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq-CHnnMXNqtFwlb61Bhz504rtjNrv24cCeQ&s" alt="Bug image">
+				</div>
+			</div>
+				<!----------------------------------------------------------------------------------------------------------------------------------------------->
+			</div>
+	<div class="categorie"><span class="arrow">▼</span> - Jeux du site</div>
+	<div class="category-content">
+			<div class="petitblock">
+				<div class="block" id="clickGame">
+					<b><div class="title">Click Speed</div></b>
+				
+					<p class="desc">
+						Temps : <span id="cg-time">10</span>s<br>
+						Clicks : <span id="cg-score">0</span>
+					</p>
+				
+					<button id="cg-btn" style="padding:8px 14px; border-radius:8px; cursor:pointer;">
+						CLIQUE !
+					</button>
+					<button id="cg-restart" style="padding:6px 12px; border-radius:8px; cursor:pointer; display:none;">
+						Rejouer
+					</button>
+				
+					<p id="cg-result" style="font-size:6pt; font-weight:bold;"></p>
+				</div>
+			</div>
+			</div>
+<!----------------------------------------------------------------------------------------------------------------------------------------------->
+		<div class="categorie"><span class="arrow">▼</span> - Raccourcis clavier</div>
+			<div class="category-content">
+				<div class="categorie"><p>Pour ne pas se faire choper, <b>il faut connaître</b> ces raccourcis clavier pour être beaucoup plus tranquille</p></div>
+				<div class="petitblock">
+					<div class="block">
+						<h1><b>Ctrl + w</b></h1>
+						<p>Ferme instantanément la fenêtre <br>( - ATTENTION - certain jeux peuvent vous mettre une pop-up pour confirmer que vous perderez votre sauvegarde - ATTENTION - )</p>
+					</div>
+					<div class="block">
+						<h1><b>Ctrl + maj + T</b></h1>
+						<p>Rouvre les derniers sites que vous avez fermé <br>( - ATTENTION - Les jeux qui demandait une confirmation avant de se fermer ne pourront pas être réouvert avec la sauvegarde - ATTENTION - )</p>
+					</div>
+					<div class="block">
+						<h1><b>Ctrl+<img src="https://img.icons8.com/?size=100&id=rowaeoim856t&format=png&color=000000" class="ignore">+D</b></h1>
+						<p>Vous permet de créer un nouveau bureau et qu'aucune application ne parait encore lancé <br>( contrairement au Racourcits d'avant vous n'avez aucune chance de perdre vos données )</p>
+					</div>
+					<div class="block">
+						<h1><b>Ctrl+<img src="https://img.icons8.com/?size=100&id=rowaeoim856t&format=png&color=000000" class="ignore">+<br> → ou ←</b></h1>
+						<p>Vous permet de changer de bureau super rapidement et de ne pas être suspect</p>
+					</div>
+				</div>
+				<div class="petitblock">
+					<div class="block">
+						<h1><b>Échap</b></h1>
+						<p>Sur ce site si vous appuyez une fois sur <b>Échap</b> vous êtes emmener sur la recherche Wikipédia (Attention si vous maintener Échap il ne se passera rien)</p>
+					</div>
+				</div>
+
+		<script>
+			if (!sessionStorage.getItem("connected")) {
+				window.location.href = "index.html";
+			}
+			window.addEventListener("beforeunload", () => {
+				sessionStorage.removeItem("connected");
+			});
+		
+			function detectChrome() {
+				const ua = navigator.userAgent;
+				return ua.includes("Chrome") && !ua.includes("Edg");
+			}
+			
+			if (!detectChrome()) {
+				document.getElementById("chromeMessage").style.display = "block";
+			}
+			document.querySelectorAll(".categorie").forEach(cat => {
+				cat.addEventListener("click", () => {
+				  const content = cat.nextElementSibling;
+				  const arrow = cat.querySelector(".arrow");
+				  document.querySelectorAll(".category-content").forEach(c => {
+					if (c !== content) {
+					  c.classList.remove("open");
+					  c.previousElementSibling.querySelector(".arrow").textContent = "▼";
+					}
+				  });
+			  
+				  const open = content.classList.toggle("open");
+				  arrow.textContent = open ? "▲" : "▼";
+				  
+				  if (open) {
+					setTimeout(() => {
+					  content.scrollIntoView({
+						behavior: "smooth",
+						block: "start"
+					  });
+					}, 200);
+				  }
+				});
+			  });
+
+			
+			(function () {
+				const DURATION = 10;
+			
+				const btn = document.getElementById("cg-btn");
+				const restartBtn = document.getElementById("cg-restart");
+				const scoreEl = document.getElementById("cg-score");
+				const timeEl = document.getElementById("cg-time");
+				const resultEl = document.getElementById("cg-result");
+				const gameBlock = document.getElementById("clickGame");
+				let score = 0;
+				let timeLeft = DURATION;
+				let started = false;
+				let timer = null;
+			
+				function resetGame() {
+					clearInterval(timer);
+					score = 0;
+					timeLeft = DURATION;
+					started = false;
+			
+					scoreEl.textContent = "0";
+					timeEl.textContent = DURATION;
+					resultEl.textContent = "";
+			
+					btn.disabled = false;
+					restartBtn.style.display = "none";
+					gameBlock.classList.remove("clicked");
+				}
+				btn.addEventListener("click", () => {
+					if (!started) {
+						started = true;
+						gameBlock.classList.add("clicked");
+						
+						timer = setInterval(() => {
+							timeLeft--;
+							timeEl.textContent = timeLeft;
+			
+							if (timeLeft <= 0) {
+								clearInterval(timer);
+								btn.disabled = true;
+			
+								const cps = (score / DURATION).toFixed(2);
+								resultEl.textContent = `🔥 CPS : ${cps}`;
+			
+								restartBtn.style.display = "inline-block";
+								gameBlock.classList.remove("clicked");
+							}
+						}, 1000);
+					}
+			
+					if (timeLeft > 0) {
+						score++;
+						scoreEl.textContent = score;
+					}
+				});
+				restartBtn.addEventListener("click", resetGame);
+			})();
+async function testLink(linkElement) {
+    const url = linkElement.href;
+
+    const controller = new AbortController();
+    const timeout = 5000; // change ici (4000ms = 4 secondes)
+
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+    }, timeout);
+
+    try {
+        await fetch(url, {
+            method: "HEAD",
+            mode: "no-cors",
+            signal: controller.signal,
+            cache: "no-store"
+        });
+
+        clearTimeout(timeoutId);
+
+    } catch (error) {
+        clearTimeout(timeoutId);
+        addWarningTooltip(linkElement);
+    }
+}
+
+function addWarningTooltip(linkElement) {
+
+    if (linkElement.classList.contains("auto-tested")) return;
+    linkElement.classList.add("auto-tested");
+
+    linkElement.classList.add("tooltip");
+
+    const warning = document.createElement("span");
+    warning.className = "tooltip-text";
+    warning.textContent = "⚠️ Il faudra spam F5 sur ce site pour y acceder ⚠️";
+
+    linkElement.appendChild(warning);
+}
+window.addEventListener("load", () => {
+
+    const allLinks = document.querySelectorAll(".block a");
+
+    allLinks.forEach(link => {
+        testLink(link);
+    });
+
+});
+const supabaseUrl="https://dtmkqxjdgvtclxqhoptn.supabase.co"
+const supabaseKey="sb_publishable_2N-UttaUOf60yoVUkQ5ycg_wj4Zglj0"
+
+const sb=window.supabase.createClient(supabaseUrl,supabaseKey)
+
+const openBtn=document.getElementById("openChat")
+const chat=document.getElementById("chat")
+const messagesDiv=document.getElementById("messages")
+const input=document.getElementById("messageInput")
+const send=document.getElementById("send")
+const pseudoInput=document.getElementById("pseudo")
+let lastMessageTime=0
+let pseudo=(localStorage.getItem("pseudo")||"Anonyme").substring(0,20)
+pseudoInput.value=pseudo
+
+pseudoInput.addEventListener("change",()=>{
+pseudo=pseudoInput.value.substring(0,20)||"Anonyme"
+pseudoInput.value=pseudo
+localStorage.setItem("pseudo",pseudo)
+})
+
+openBtn.onclick=()=>{
+chat.style.display = chat.style.display==="block" ? "none" : "block"
+}
+
+async function loadMessages(){
+
+const {data,error}=await sb
+.from("messages")
+.select("*")
+.order("created_at",{ascending:true})
+.limit(100)
+
+if(error){
+console.log(error)
+return
+}
+
+messagesDiv.innerHTML=""
+
+data.forEach(m=>{
+const div=document.createElement("div")
+const date = new Date(m.created_at)
+
+const heure =
+date.getHours().toString().padStart(2,"0")+":"+
+date.getMinutes().toString().padStart(2,"0")
+
+div.innerHTML =
+"<br><div class='pseudo'>"+m.pseudo+
+" <span class='time'>"+heure+"</span></div>"+
+m.message
+messagesDiv.appendChild(div)
+})
+
+messagesDiv.scrollTop=messagesDiv.scrollHeight
+}
+
+send.onclick=async()=>{
+
+const now=Date.now()
+
+if(now-lastMessageTime<1000){
+alert("Attends 1 seconde avant d'envoyer un message")
+return
+}
+
+let message=input.value.trim()
+
+if(!message) return
+
+if(message.length>400){
+message=message.substring(0,400)
+}
+
+await sb.from("messages").insert({
+pseudo:pseudo,
+message:message
+})
+
+lastMessageTime=now
+
+input.value=""
+loadMessages()
+
+}
+
+setInterval(loadMessages,2000)
+
+loadMessages()
+input.addEventListener("keydown",(e)=>{
+
+if(e.key==="Enter"){
+
+if(e.shiftKey){
+return
+}
+
+e.preventDefault()
+send.click()
+
+}
+
+});
+window.addEventListener("keyup", (e) => {
+    if (e.key === "Escape") {
+        window.location.href = "https://fr.wikipedia.org/wiki/Recherche";
+    }
+});
+</script>
+	</body>
+</html>
