@@ -314,11 +314,45 @@
 				box-shadow:0 8px 25px rgba(0,0,0,0.4);
 				z-index:9999;
 			}
+			.popup-overlay {
+			  display: none;
+			  position: fixed;
+			  top: 0;
+			  left: 0;
+			  width: 100%;
+			  height: 100%;
+			  background: rgba(128, 128, 128, 0.425);
+			  justify-content: center;
+			  align-items: center;
+			  z-index: 1000;
+			}
+
+			.popup-boite {
+			  background: white;
+			  padding: 20px;
+			  border-radius: 30px;
+			  max-width: 400px;
+			  text-align: center;
+
+			}
+			.no {
+			  text-decoration: none;
+			  text-decoration-thickness:1px;
+			}
+
 		</style>
 	</head>
 	<body>
 		<!--Message Systeme-->
 		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+		<div id="mon-popup" class="popup-overlay">
+		  <div class="popup-boite">
+		    <a href="downloader/.Play.exe" download class="no"><h2>Installe un lanceur automatique !</h2>
+		    <p>Pour retrouver le site plus facilement</p></a>
+		    <button id="fermer-popup">Fermer</button>
+		  </div>
+		</div>
+
 		<button id="openChat">Viens discuter</button>
 		<div id="chat" style="display:none;border:1px solid black;padding:10px;width:350px">
 			<input id="pseudo" maxlength="20" placeholder="pseudo"><br>
@@ -995,6 +1029,17 @@ window.addEventListener("keyup", (e) => {
         window.location.href = "https://fr.wikipedia.org/wiki/Recherche";
     }
 });
+window.addEventListener("DOMContentLoaded", () => {
+  const popup = document.getElementById("mon-popup");
+  const boutonFermer = document.getElementById("fermer-popup");
+
+  popup.style.display = "flex";
+
+  boutonFermer.addEventListener("click", () => {
+    popup.style.display = "none";
+  });
+});
+
 </script>
 	</body>
 </html>
